@@ -189,7 +189,8 @@ echo ""
 prompt_yes_no "Create project instructions (.github/copilot-instructions.md)?" "Y" && CREATE_INSTRUCTIONS=true || CREATE_INSTRUCTIONS=false
 prompt_yes_no "Create context-specific instructions (backend, frontend, security)?" "Y" && CREATE_CONTEXT_INSTRUCTIONS=true || CREATE_CONTEXT_INSTRUCTIONS=false
 prompt_yes_no "Create reusable prompts (code review, tests, refactor)?" "Y" && CREATE_PROMPTS=true || CREATE_PROMPTS=false
-prompt_yes_no "Create chat modes (architect, security, devops, reviewer)?" "Y" && CREATE_CHATMODES=true || CREATE_CHATMODES=false
+prompt_yes_no "Create agents (architect, security, devops, reviewer)?" "Y" && CREATE_AGENTS=true || CREATE_AGENTS=false
+prompt_yes_no "Create skills framework?" "Y" && CREATE_SKILLS=true || CREATE_SKILLS=false
 
 # Git settings
 echo ""
@@ -216,7 +217,8 @@ echo "    - Docs structure:            $CREATE_DOCS"
 echo "    - Project instructions:      $CREATE_INSTRUCTIONS"
 echo "    - Context instructions:      $CREATE_CONTEXT_INSTRUCTIONS"
 echo "    - Reusable prompts:          $CREATE_PROMPTS"
-echo "    - Chat modes:                $CREATE_CHATMODES"
+echo "    - Agents:                    $CREATE_AGENTS"
+echo "    - Skills:                    $CREATE_SKILLS"
 echo ""
 
 if ! prompt_yes_no "Proceed with setup?" "Y"; then
@@ -234,7 +236,8 @@ if $CREATE_GITHUB; then
 
     mkdir -p .github/instructions
     mkdir -p .github/prompts
-    mkdir -p .github/chatmodes
+    mkdir -p .github/agents
+    mkdir -p .github/skills
     mkdir -p .github/workflows
 
     # Copy CI/CD workflow examples if available
@@ -274,14 +277,24 @@ Prompts are reusable task-specific instructions that can be invoked in GitHub Co
 4. Reference the prompt in Copilot Chat with `@workspace /prompt-name`
 EOF
 
-    cat > .github/chatmodes/README.md << 'EOF'
-# Chat Modes Directory
+    cat > .github/agents/README.md << 'EOF'
+# Agents Directory
 
-## What are Chat Modes?
-Chat modes are specialized AI personas with specific roles, expertise, and tool access.
+## What are Agents?
+Agents are specialized AI personas with specific roles, expertise, and tool access configured for Claude Code and GitHub Copilot.
 
-## Creating Custom Chat Modes
-Each chat mode should be defined in a markdown file with YAML frontmatter for configuration.
+## Creating Custom Agents
+Each agent should be defined in a markdown file with YAML frontmatter for configuration.
+EOF
+
+    cat > .github/skills/README.md << 'EOF'
+# Skills Directory
+
+## What are Skills?
+Skills are reusable, composable capabilities that can be invoked by AI assistants to perform specific tasks.
+
+## Creating Custom Skills
+Create markdown files with `.skill.md` extension defining the skill's purpose, inputs, and execution steps.
 EOF
 
     print_success "Created .github directory structure"
@@ -728,11 +741,11 @@ EOF
     print_success "Created reusable prompts"
 fi
 
-# Create chat modes
-if $CREATE_CHATMODES; then
-    print_status "Creating chat modes..."
+# Create agents
+if $CREATE_AGENTS; then
+    print_status "Creating agents..."
 
-    cat > .github/chatmodes/architect.chatmode.md << 'EOF'
+    cat > .github/agents/architect.agent.md << 'EOF'
 ---
 description: System architecture and design specialist
 tools:
@@ -755,7 +768,7 @@ You are an experienced software architect specializing in:
 - Database optimization
 EOF
 
-    cat > .github/chatmodes/security-analyst.chatmode.md << 'EOF'
+    cat > .github/agents/security-analyst.agent.md << 'EOF'
 ---
 description: Security-focused code analysis
 tools:
@@ -778,7 +791,7 @@ You are a cybersecurity expert focused on:
 - Secure data handling
 EOF
 
-    cat > .github/chatmodes/devops-engineer.chatmode.md << 'EOF'
+    cat > .github/agents/devops-engineer.agent.md << 'EOF'
 ---
 description: DevOps and infrastructure specialist
 tools:
@@ -801,7 +814,7 @@ You are a DevOps engineer specializing in:
 - Monitoring and observability
 EOF
 
-    cat > .github/chatmodes/code-reviewer.chatmode.md << 'EOF'
+    cat > .github/agents/code-reviewer.agent.md << 'EOF'
 ---
 description: Code review and quality assurance
 tools:
@@ -826,7 +839,42 @@ You are a senior code reviewer focused on:
 6. Documentation
 EOF
 
-    print_success "Created chat modes"
+    print_success "Created agents"
+fi
+
+# Create skills
+if $CREATE_SKILLS; then
+    print_status "Creating skills framework..."
+
+    cat > .github/skills/example-skill.skill.md << 'EOF'
+---
+name: example-skill
+description: Example skill demonstrating the skill structure
+inputs:
+  - name: target
+    type: string
+    description: Target for the skill to operate on
+outputs:
+  - name: result
+    type: string
+    description: Result of the skill execution
+---
+
+# Example Skill
+
+## Purpose
+Demonstrates how to structure a reusable skill for AI assistants.
+
+## Execution Steps
+1. Validate input parameters
+2. Perform the operation
+3. Return the result
+
+## Usage Example
+This skill can be invoked by agents to perform specific tasks in a consistent way.
+EOF
+
+    print_success "Created skills framework"
 fi
 
 # Update .gitignore
@@ -1538,7 +1586,8 @@ echo -e "${GREEN}Features Created:${NC}"
 [ "$CREATE_INSTRUCTIONS" = true ] && echo "  ✓ Project instructions (.github/copilot-instructions.md)"
 [ "$CREATE_CONTEXT_INSTRUCTIONS" = true ] && echo "  ✓ Context-specific instructions (backend, frontend, security)"
 [ "$CREATE_PROMPTS" = true ] && echo "  ✓ Reusable prompts (review, tests, security, planning)"
-[ "$CREATE_CHATMODES" = true ] && echo "  ✓ Chat modes (architect, security, devops, reviewer)"
+[ "$CREATE_AGENTS" = true ] && echo "  ✓ Agents (architect, security, devops, reviewer)"
+[ "$CREATE_SKILLS" = true ] && echo "  ✓ Skills framework"
 echo ""
 
 echo -e "${BLUE}Next Steps:${NC}"
@@ -1549,22 +1598,24 @@ echo "  4. Read docs/onboarding/ for setup guides"
 echo "  5. Start using GitHub Copilot in VS Code"
 echo ""
 
-echo -e "${BLUE}Using GitHub Copilot:${NC}"
+echo -e "${BLUE}Using AI Assistants:${NC}"
 echo "  - Instructions auto-apply based on file patterns"
 echo "  - Use @workspace /review-code for code reviews"
 echo "  - Use @workspace /generate-tests to create tests"
-echo "  - Switch to chat modes for specialized assistance"
+echo "  - Use specialized agents for expert assistance"
+echo "  - Leverage skills for automation"
 echo ""
 
 echo -e "${YELLOW}Configuration Summary:${NC}"
 echo "  - .github/copilot-instructions.md (project context)"
 echo "  - .github/instructions/ (context-specific guidelines)"
 echo "  - .github/prompts/ (reusable task prompts)"
-echo "  - .github/chatmodes/ (specialized AI personas)"
+echo "  - .github/agents/ (specialized AI agent personas)"
+echo "  - .github/skills/ (reusable capabilities)"
 echo "  - .github/workflows/ (CI/CD pipelines)"
 echo "  - .gitignore (updated with Copilot entries)"
-echo "  - AGENTS.md (chat mode catalog)"
+echo "  - AGENTS.md (agent & skill catalog)"
 echo "  - README.md (comprehensive project guide)"
 echo ""
 
-print_success "Happy coding with GitHub Copilot! 🎉"
+print_success "Happy coding with AI-assisted development! 🎉"

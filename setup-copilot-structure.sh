@@ -45,7 +45,8 @@ print_status "Creating .github directory structure..."
 
 mkdir -p .github/instructions
 mkdir -p .github/prompts
-mkdir -p .github/chatmodes
+mkdir -p .github/agents
+mkdir -p .github/skills
 mkdir -p .github/workflows
 
 # Copy CI/CD workflow examples if source directory exists
@@ -139,34 +140,34 @@ Custom prompts will be listed here after creation.
 - Security audit
 EOF
 
-# .github/chatmodes/README.md
-cat > .github/chatmodes/README.md << 'EOF'
-# Chat Modes Directory
+# .github/agents/README.md
+cat > .github/agents/README.md << 'EOF'
+# Agents Directory
 
-## What are Chat Modes?
-Chat modes are specialized AI personas with specific roles, expertise, and tool access.
+## What are Agents?
+Agents are specialized AI personas with specific roles, expertise, and tool access configured for Claude Code and GitHub Copilot.
 
-## Chat Mode Catalog
-Add your custom chat mode definitions here as markdown files.
+## Agent Catalog
+Add your custom agent definitions here as markdown files.
 
-## Creating Custom Chat Modes
-Each chat mode should be defined in a markdown file with:
+## Creating Custom Agents
+Each agent should be defined in a markdown file with:
 - YAML frontmatter for configuration
 - Description of the persona and role
 - Specific expertise areas
 - Available tools
 
-## Chat Mode Structure
+## Agent Structure
 ```markdown
 ---
-description: Brief description of the chat mode
+description: Brief description of the agent
 tools:
   - read
   - search
   - edit
 ---
 
-# Chat Mode Name
+# Agent Name
 
 You are a [role] specialized in [expertise].
 
@@ -175,11 +176,63 @@ Focus on:
 - Expertise area 2
 ```
 
-## Example Chat Modes
-- Architect mode for system design
+## Example Agents
+- Architect agent for system design
 - Security analyst for vulnerability detection
 - DevOps engineer for deployment
 - Code reviewer for quality assurance
+EOF
+
+# .github/skills/README.md
+cat > .github/skills/README.md << 'EOF'
+# Skills Directory
+
+## What are Skills?
+Skills are reusable, composable capabilities that can be invoked by AI assistants to perform specific tasks.
+
+## Available Skills
+Custom skills will be listed here after creation.
+
+## Creating Custom Skills
+1. Create a markdown file: `.github/skills/skill-name.skill.md`
+2. Define the skill's purpose and inputs
+3. Specify the execution steps
+4. Document outputs and side effects
+
+## Skill Structure
+```markdown
+---
+name: skill-name
+description: Brief description of what this skill does
+inputs:
+  - name: input1
+    type: string
+    description: Description of input1
+outputs:
+  - name: output1
+    type: string
+    description: Description of output1
+---
+
+# Skill Name
+
+## Purpose
+What this skill accomplishes
+
+## Execution Steps
+1. Step 1
+2. Step 2
+3. Step 3
+
+## Usage Example
+Example of how to invoke this skill
+```
+
+## Example Skills
+- Code refactoring automation
+- Test generation and execution
+- Documentation generation
+- Deployment automation
 EOF
 
 # Create dev workspace files
@@ -676,10 +729,10 @@ describe('UserService', () => {
 - Use test fixtures for common data
 EOF
 
-# Create example chat modes
-print_status "Creating example chat modes..."
+# Create example agents
+print_status "Creating example agents..."
 
-cat > .github/chatmodes/architect.chatmode.md << 'EOF'
+cat > .github/agents/architect.agent.md << 'EOF'
 ---
 description: System architecture and design specialist
 tools:
@@ -724,7 +777,7 @@ When designing systems, always consider:
 Provide architectural diagrams when helpful (using Mermaid or ASCII).
 EOF
 
-cat > .github/chatmodes/security-analyst.chatmode.md << 'EOF'
+cat > .github/agents/security-analyst.agent.md << 'EOF'
 ---
 description: Security-focused code analysis and vulnerability detection
 tools:
@@ -778,7 +831,7 @@ Provide findings with:
 - Code examples of fixes
 EOF
 
-cat > .github/chatmodes/devops-engineer.chatmode.md << 'EOF'
+cat > .github/agents/devops-engineer.agent.md << 'EOF'
 ---
 description: DevOps and infrastructure specialist
 tools:
@@ -833,7 +886,7 @@ You are a DevOps engineer specializing in:
 - [ ] Documentation updated
 EOF
 
-cat > .github/chatmodes/code-reviewer.chatmode.md << 'EOF'
+cat > .github/agents/code-reviewer.agent.md << 'EOF'
 ---
 description: Thorough code review and quality assurance
 tools:
@@ -1025,12 +1078,19 @@ Reference these prompts in chat with `@workspace /prompt-name`:
 - `/security-audit` - Security vulnerability scan
 - `/plan-feature` - Plan feature implementation
 
-## Chat Modes
-Switch to specialized modes for specific tasks:
+## Agents
+Use specialized agents for specific tasks:
 - `architect` - System design and architecture
 - `security-analyst` - Security analysis
 - `devops-engineer` - Infrastructure and deployment
 - `code-reviewer` - Code quality review
+
+## Skills
+Reusable capabilities available in `.github/skills/`:
+- Custom automation workflows
+- Code generation templates
+- Testing utilities
+- Deployment scripts
 
 ## Code Patterns
 
@@ -1107,12 +1167,12 @@ EOF
 print_status "Creating comprehensive AGENTS.md..."
 
 cat > AGENTS.md << 'EOF'
-# AGENTS.md - GitHub Copilot Agent & Chat Mode Catalog
+# AGENTS.md - AI Agent & Skill Catalog
 
 ## Overview
-This document catalogs all available chat modes and AI assistance patterns in GitHub Copilot. Chat modes are specialized AI personas that provide expert assistance in specific domains.
+This document catalogs all available agents and skills for AI-assisted development. Agents are specialized AI personas that provide expert assistance in specific domains, while skills are reusable capabilities that can be invoked to perform specific tasks.
 
-## Built-in Chat Modes
+## Built-in Agents
 
 ### 1. Software Architect Mode
 **Usage**: Switch to architect mode for system design questions
@@ -1323,21 +1383,25 @@ This document catalogs all available chat modes and AI assistance patterns in Gi
 
 ---
 
-## Using GitHub Copilot Chat Modes
+## Using AI Agents
 
-### Activating Chat Modes
+### Activating Agents
 
-1. **In VS Code**:
+1. **In VS Code with GitHub Copilot**:
    - Open GitHub Copilot Chat (Ctrl+Shift+I or Cmd+Shift+I)
-   - Type the mode name at the start of your question
+   - Type the agent name at the start of your question
    - Example: "architect mode: design a caching layer"
 
-2. **Mode Persistence**:
-   - Once activated, the mode persists for the conversation
-   - Switch modes by explicitly mentioning a new mode
+2. **With Claude Code**:
+   - Reference agents defined in `.github/agents/`
+   - Agents provide context-specific assistance
+
+3. **Agent Persistence**:
+   - Once activated, the agent persists for the conversation
+   - Switch agents by explicitly mentioning a new agent
    - Reset to default by starting a new chat
 
-### Effective Mode Usage
+### Effective Agent Usage
 
 **Be Specific**:
 ```
@@ -1362,32 +1426,42 @@ This document catalogs all available chat modes and AI assistance patterns in Gi
 
 ## Reusable Prompts Integration
 
-Chat modes work seamlessly with reusable prompts:
+Agents work seamlessly with reusable prompts:
 
 ```
-@workspace /review-code (uses code-reviewer mode internally)
-@workspace /security-audit (uses security-analyst mode internally)
-@workspace /plan-feature (uses architect mode for design)
+@workspace /review-code (uses code-reviewer agent internally)
+@workspace /security-audit (uses security-analyst agent internally)
+@workspace /plan-feature (uses architect agent for design)
 ```
+
+---
+
+## Skills Integration
+
+Skills are reusable capabilities that agents can invoke:
+- Defined in `.github/skills/`
+- Can be composed together for complex workflows
+- Provide consistent execution patterns
+- Enable automation of common tasks
 
 ---
 
 ## Context-Specific Instructions Integration
 
-Chat modes automatically apply context-specific instructions from `.github/instructions/`:
-- Backend instructions apply in architect and code-reviewer modes
-- Security instructions always apply in security-analyst mode
-- Testing instructions apply in code-reviewer mode
+Agents automatically apply context-specific instructions from `.github/instructions/`:
+- Backend instructions apply in architect and code-reviewer agents
+- Security instructions always apply in security-analyst agent
+- Testing instructions apply in code-reviewer agent
 
 ---
 
-## Best Practices for Chat Mode Usage
+## Best Practices for Agent Usage
 
-### 1. Choose the Right Mode
-- **Architecture questions** → Architect mode
-- **Security concerns** → Security analyst mode
-- **Infrastructure/deployment** → DevOps engineer mode
-- **Code quality** → Code reviewer mode
+### 1. Choose the Right Agent
+- **Architecture questions** → Architect agent
+- **Security concerns** → Security analyst agent
+- **Infrastructure/deployment** → DevOps engineer agent
+- **Code quality** → Code reviewer agent
 
 ### 2. Provide Complete Context
 - Current system state
@@ -1413,9 +1487,9 @@ Chat modes automatically apply context-specific instructions from `.github/instr
 
 ## Advanced Usage Patterns
 
-### Multi-Mode Consultation
+### Multi-Agent Consultation
 
-For complex problems, consult multiple modes:
+For complex problems, consult multiple agents:
 
 ```
 1. "Architect mode: Design the system architecture"
@@ -1424,7 +1498,7 @@ For complex problems, consult multiple modes:
 4. "Code-reviewer mode: Review the implementation"
 ```
 
-### Mode-Specific Workflows
+### Agent-Specific Workflows
 
 **Feature Development Workflow**:
 ```
@@ -1446,37 +1520,37 @@ For complex problems, consult multiple modes:
 
 ## Troubleshooting
 
-### Mode Not Responding as Expected
+### Agent Not Responding as Expected
 - Be more specific in your question
 - Provide more context about your situation
 - Rephrase your question
 - Start a new chat and try again
 
 ### Getting Generic Responses
-- Explicitly mention the mode name
+- Explicitly mention the agent name
 - Provide technical details
 - Ask specific questions rather than general ones
 - Include code snippets or examples
 
-### Mode Seems Wrong for the Task
-- Double-check mode selection
-- Consider if a different mode is more appropriate
-- Try combining insights from multiple modes
+### Agent Seems Wrong for the Task
+- Double-check agent selection
+- Consider if a different agent is more appropriate
+- Try combining insights from multiple agents
 
 ---
 
-## Custom Chat Mode Development
+## Custom Agent Development
 
-While GitHub Copilot has built-in modes, you can simulate custom modes using `.github/chatmodes/`:
+You can create custom agents using `.github/agents/`:
 
-### Creating Custom Mode Definitions
+### Creating Custom Agent Definitions
 
-1. Create file: `.github/chatmodes/custom-mode.chatmode.md`
+1. Create file: `.github/agents/custom-agent.agent.md`
 2. Define role and expertise
 3. Specify tools and approach
 4. Document usage examples
 
-**Example Custom Mode**:
+**Example Custom Agent**:
 ```markdown
 ---
 description: Database optimization specialist
@@ -1485,7 +1559,7 @@ tools:
   - search
 ---
 
-# Database Optimizer Mode
+# Database Optimizer Agent
 
 You are a database optimization expert specializing in:
 - Query optimization
@@ -1502,13 +1576,60 @@ You are a database optimization expert specializing in:
 
 ---
 
+## Custom Skill Development
+
+You can create custom skills using `.github/skills/`:
+
+### Creating Custom Skill Definitions
+
+1. Create file: `.github/skills/custom-skill.skill.md`
+2. Define purpose and inputs
+3. Specify execution steps
+4. Document outputs
+
+**Example Custom Skill**:
+```markdown
+---
+name: database-migration
+description: Automated database schema migration
+inputs:
+  - name: migration_script
+    type: path
+    description: Path to migration script
+outputs:
+  - name: migration_status
+    type: string
+    description: Success or failure status
+---
+
+# Database Migration Skill
+
+## Purpose
+Safely execute database migrations with rollback capability
+
+## Execution Steps
+1. Backup current database state
+2. Validate migration script
+3. Execute migration in transaction
+4. Verify schema changes
+5. Commit or rollback based on validation
+```
+
+---
+
 ## Integration with GitHub Actions
 
-Chat modes complement CI/CD workflows:
-- **Architect mode** - Design workflow structure
-- **Security-analyst mode** - Review workflow security
-- **DevOps-engineer mode** - Implement and optimize workflows
-- **Code-reviewer mode** - Review workflow YAML files
+Agents complement CI/CD workflows:
+- **Architect agent** - Design workflow structure
+- **Security-analyst agent** - Review workflow security
+- **DevOps-engineer agent** - Implement and optimize workflows
+- **Code-reviewer agent** - Review workflow YAML files
+
+Skills can automate CI/CD tasks:
+- Deployment automation
+- Test execution
+- Code quality checks
+- Security scanning
 
 ---
 
@@ -1516,6 +1637,7 @@ Chat modes complement CI/CD workflows:
 
 ### Documentation
 - [GitHub Copilot Documentation](https://docs.github.com/en/copilot)
+- [Claude Code Documentation](https://docs.anthropic.com/claude-code)
 - [VS Code Copilot Extension](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot)
 - [Copilot Chat Documentation](https://docs.github.com/en/copilot/github-copilot-chat)
 
@@ -1523,21 +1645,23 @@ Chat modes complement CI/CD workflows:
 - Project instructions: `.github/copilot-instructions.md`
 - Context-specific guidelines: `.github/instructions/`
 - Reusable prompts: `.github/prompts/`
-- Chat mode definitions: `.github/chatmodes/`
+- Agent definitions: `.github/agents/`
+- Skill definitions: `.github/skills/`
 
 ---
 
 ## Changelog
 
 ### Version 1.0 (Initial)
-- Documented all built-in chat modes
-- Added usage patterns and best practices
+- Documented all built-in agents
+- Added agent usage patterns and best practices
 - Included troubleshooting guide
 - Created integration guidelines
+- Added skills framework documentation
 
 ---
 
-**This catalog is maintained as part of the GitHub Copilot enhanced setup.**
+**This catalog is maintained as part of the AI-assisted development setup.**
 **Last Updated**: Auto-generated during setup
 **Maintainer**: Project Team
 
@@ -1575,7 +1699,7 @@ This file contains:
 - Project architecture
 - Code standards
 - Available prompts
-- Chat modes
+- Agents and skills
 - Workflow rules
 
 ## 4. Explore Available Features
@@ -1594,12 +1718,19 @@ Reusable task prompts in `.github/prompts/`:
 - `@workspace /security-audit` - Security scan
 - `@workspace /plan-feature` - Feature planning
 
-### Chat Modes
-Specialized AI personas in `.github/chatmodes/`:
-- Architect mode for system design
+### Agents
+Specialized AI personas in `.github/agents/`:
+- Architect agent for system design
 - Security analyst for vulnerability detection
 - DevOps engineer for deployment
 - Code reviewer for quality assurance
+
+### Skills
+Reusable capabilities in `.github/skills/`:
+- Automation workflows
+- Code generation templates
+- Testing utilities
+- Deployment scripts
 
 ## 5. Understand the Directory Structure
 
@@ -1608,7 +1739,8 @@ Specialized AI personas in `.github/chatmodes/`:
   copilot-instructions.md  - Main project instructions
   instructions/       - Context-specific guidelines
   prompts/           - Reusable task prompts
-  chatmodes/         - AI personas
+  agents/            - AI agent personas
+  skills/            - Reusable capabilities
 dev/active/          - Current work context
 dev/plans/           - Planning documents
 dev/scratch/         - Scratchpad for planning
@@ -1631,7 +1763,8 @@ Ask Copilot: "What is the project structure?" or "Show me the current tasks"
 
 - Always review `.github/copilot-instructions.md` before starting work
 - Use appropriate prompts for common tasks
-- Switch to specialized chat modes when needed
+- Switch to specialized agents when needed
+- Leverage skills for automation
 - Keep dev/active/ updated
 - Document decisions in docs/decisions/
 - Ask questions before making assumptions
@@ -1653,14 +1786,21 @@ Reference prompts in Copilot Chat:
 @workspace /plan-feature real-time notifications
 ```
 
-## 11. Switching Chat Modes
+## 11. Using Agents
 
-To use a specialized chat mode:
-1. Open GitHub Copilot Chat
-2. Type the mode name (e.g., "architect mode")
+To use a specialized agent:
+1. Open GitHub Copilot Chat or Claude Code
+2. Reference the agent (e.g., "architect mode")
 3. Ask your question in that context
 
-## 12. Tips for Effective Use
+## 12. Using Skills
+
+Skills are reusable capabilities defined in `.github/skills/`:
+- Reference skills in agent workflows
+- Compose skills for complex automation
+- Customize skills for project-specific needs
+
+## 13. Tips for Effective Use
 
 - Be specific in your requests
 - Provide context in your prompts
@@ -1684,7 +1824,8 @@ project-root/
 │   ├── copilot-instructions.md  Main project instructions
 │   ├── instructions/    Context-specific guidelines
 │   ├── prompts/        Reusable task prompts
-│   ├── chatmodes/      Specialized AI personas
+│   ├── agents/         Specialized AI agent personas
+│   ├── skills/         Reusable capabilities
 │   └── workflows/      GitHub Actions CI/CD
 │
 ├── dev/                 Development workspace
@@ -1906,7 +2047,8 @@ npm run dev
 │   ├── copilot-instructions.md  # Main project instructions
 │   ├── instructions/    # Context-specific guidelines
 │   ├── prompts/        # Reusable task prompts
-│   ├── chatmodes/      # Specialized AI personas
+│   ├── agents/         # Specialized AI agent personas
+│   ├── skills/         # Reusable capabilities
 │   └── workflows/      # GitHub Actions CI/CD
 │
 ├── dev/                 # 🛠️ Development workspace
@@ -2006,29 +2148,37 @@ Copilot: I'll review the current changes for:
 [Provides detailed review with specific suggestions]
 ```
 
-## 👥 Chat Modes
+## 👥 AI Agents
 
-Switch to specialized AI personas for expert assistance:
+Switch to specialized AI agent personas for expert assistance:
 
-### 🏗️ Architect Mode
+### 🏗️ Architect Agent
 System design and architecture specialist
 - Use for: Design decisions, scalability planning
 - Example: "In architect mode, design a microservices architecture for our API"
 
-### 🔒 Security Analyst Mode
+### 🔒 Security Analyst Agent
 Security-focused code analysis
 - Use for: Vulnerability detection, security reviews
 - Example: "In security-analyst mode, audit the authentication system"
 
-### 🚀 DevOps Engineer Mode
+### 🚀 DevOps Engineer Agent
 Infrastructure and deployment specialist
 - Use for: CI/CD, containerization, cloud deployment
 - Example: "In devops-engineer mode, set up a CI/CD pipeline"
 
-### 👨‍💻 Code Reviewer Mode
+### 👨‍💻 Code Reviewer Agent
 Code quality and best practices
 - Use for: Pull request reviews, refactoring suggestions
 - Example: "In code-reviewer mode, review this pull request"
+
+## 🔧 Skills
+
+Reusable capabilities for automation:
+- Defined in [.github/skills/](.github/skills/)
+- Composable for complex workflows
+- Customizable for project needs
+- Example skills: Code generation, testing automation, deployment scripts
 
 ## ✅ Quality Workflows
 
@@ -2081,7 +2231,7 @@ Before submitting a pull request:
 
 1. Read `.github/copilot-instructions.md`
 2. Review existing instructions in `.github/instructions/`
-3. Understand available prompts and chat modes
+3. Understand available prompts, agents, and skills
 4. Check `dev/active/context.md` for current work
 
 ### Contribution Workflow
@@ -2137,7 +2287,7 @@ print_success "GitHub Copilot structure has been set up successfully!"
 echo ""
 
 echo -e "${GREEN}📁 Directory Structure Created:${NC}"
-echo "  ✓ .github/ (instructions, prompts, chatmodes, workflows)"
+echo "  ✓ .github/ (instructions, prompts, agents, skills, workflows)"
 echo "  ✓ dev/ (active, plans, scratch)"
 echo "  ✓ docs/ (architecture, onboarding, decisions)"
 echo "  ✓ src/"
@@ -2148,9 +2298,10 @@ echo -e "${GREEN}📄 Key Files Created:${NC}"
 echo "  ✓ .github/copilot-instructions.md (main project instructions)"
 echo "  ✓ .github/instructions/ (context-specific guidelines)"
 echo "  ✓ .github/prompts/ (reusable task prompts)"
-echo "  ✓ .github/chatmodes/ (specialized AI personas)"
+echo "  ✓ .github/agents/ (specialized AI agent personas)"
+echo "  ✓ .github/skills/ (reusable capabilities)"
 echo "  ✓ .github/workflows/ (CI/CD pipelines)"
-echo "  ✓ AGENTS.md (comprehensive chat mode catalog)"
+echo "  ✓ AGENTS.md (comprehensive agent & skill catalog)"
 echo "  ✓ README.md (project documentation)"
 echo "  ✓ .gitignore (updated with Copilot entries)"
 echo ""
@@ -2159,21 +2310,22 @@ echo -e "${BLUE}🚀 Next Steps:${NC}"
 echo "  1. Review and customize .github/copilot-instructions.md"
 echo "  2. Explore context-specific instructions in .github/instructions/"
 echo "  3. Try reusable prompts with @workspace /prompt-name"
-echo "  4. Read AGENTS.md to understand available chat modes"
+echo "  4. Read AGENTS.md to understand available agents and skills"
 echo "  5. Configure GitHub Actions secrets for CI/CD workflows"
 echo "  6. Read docs/onboarding/ for detailed setup guides"
-echo "  7. Start using GitHub Copilot in VS Code"
+echo "  7. Start using GitHub Copilot in VS Code or Claude Code"
 echo ""
 
 echo -e "${BLUE}💡 Quick Tips:${NC}"
 echo "  • Instructions auto-apply based on file patterns"
 echo "  • Use @workspace /review-code for comprehensive code reviews"
 echo "  • Use @workspace /generate-tests to create tests"
-echo "  • Switch to chat modes for specialized assistance:"
+echo "  • Use specialized agents for expert assistance:"
 echo "    - 'architect mode' for system design"
 echo "    - 'security-analyst mode' for security reviews"
 echo "    - 'devops-engineer mode' for infrastructure"
 echo "    - 'code-reviewer mode' for code quality"
+echo "  • Leverage skills for automation and code generation"
 echo ""
 
 echo -e "${YELLOW}📦 CI/CD Workflows Available:${NC}"
